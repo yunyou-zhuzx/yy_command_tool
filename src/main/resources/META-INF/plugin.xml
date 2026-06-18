@@ -1,0 +1,64 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+	<!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+	<id>com.yunyoucloud.tool</id>
+
+	<!-- Public plugin name should be written in Title Case.
+		 Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
+	<name>YunYou Command Tool</name>
+
+	<!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+	<vendor url="https://github.com/yunyou-zhuzx" email="zhuzx@yunyoutech.com">yunyou-zhuzx</vendor>
+
+	<!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+		 Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
+	<description><![CDATA[
+	Command Tool plugin for IntelliJ IDEA. Provides a tree-style goal list in a tool window —
+	double-click to execute <b>Maven</b>, <b>Gradle</b>, <b>PowerShell</b>, <b>Shell</b> or <b>Cmd</b> commands
+	with real-time log output in the <i>Run Content Executor</i>.
+	<br>
+	<br>Features:
+	<ul>
+		<li>Categorized command tree with Module Packaging, Script Execution</li>
+		<li>Custom command management (add, edit, delete, reorder, favorites)</li>
+		<li>Spring Boot module auto-discovery for packaging</li>
+		<li>Built-in deployment &amp; code-generation scripts with parameter dialogs</li>
+		<li>Extra command-line parameters support</li>
+		<li>Sync module packaging targets as Maven Run Configurations</li>
+	</ul>
+	]]></description>
+	
+	<change-notes><![CDATA[
+	<h2>1.0.0</h2>
+	<ul>
+		<li>Initial release</li>
+		<li>Tree-style command browser with categorized Maven goals</li>
+		<li>Spring Boot module auto-detection for packaging</li>
+		<li>Built-in PowerShell scripts for deployment and code generation</li>
+		<li>Custom command management with group organization</li>
+		<li>Real-time execution log with rerun and stop controls</li>
+	</ul>
+	]]></change-notes>
+	<!-- Product and plugin compatibility requirements.
+		 Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+	<depends>com.intellij.modules.platform</depends>
+	<depends>org.jetbrains.idea.maven</depends>
+
+	<!-- Extension points defined by the plugin.
+		 Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+	<extensions defaultExtensionNs="com.intellij">
+		<toolWindow
+			id="YunYou Command Tool"
+			anchor="right"
+			icon="/icons/tool.svg"
+			factoryClass="com.yunyoucloud.tool.toolwindow.CommandRunnerToolWindow$Factory"/>
+
+		<notificationGroup id="YunYou Command Tool"
+			displayType="BALLOON"
+			isLogByDefault="true"
+			toolWindowId="YunYou Command Tool"/>
+
+		<projectService serviceImplementation="com.yunyoucloud.tool.service.CommandRunnerSettings"/>
+		<projectService serviceImplementation="com.yunyoucloud.tool.service.CommandGoalService"/>
+	</extensions>
+</idea-plugin>
