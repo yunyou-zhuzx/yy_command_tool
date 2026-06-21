@@ -153,7 +153,6 @@ public class CommandRunnerToolWindow {
 			
 			JButton btnAdd = createToolbarButton("", AllIcons.General.Add, "添加自定义命令");
 			JButton btnRefresh = createToolbarButton("", AllIcons.Actions.Refresh, "刷新");
-			JButton btnSyncConfig = createToolbarButton("同步配置", AllIcons.General.Gear,"将模块打包目标同步为 Maven Run Configuration");
 			
 			toolbar.add(btnRun);
 			toolbar.add(btnStop);
@@ -162,7 +161,6 @@ public class CommandRunnerToolWindow {
 			toolbar.add(Box.createHorizontalStrut(8));
 			toolbar.add(btnAdd);
 			toolbar.add(btnRefresh);
-			toolbar.add(btnSyncConfig);
 			
 			// === 树 ===
 			Tree tree = new Tree();
@@ -545,7 +543,7 @@ public class CommandRunnerToolWindow {
 						// 同步到RunConfig
 						JMenuItem syncToRunItem = new JMenuItem("同步到RunConfig", AllIcons.Actions.SynchronizeScrolling);
 						syncToRunItem.addActionListener(ev -> {
-							syncSingleMavenRunConfigurations(goal);
+							syncSingleMavenRunConfigurations(goal, true);
 						});
 						popup.add(syncToRunItem);
 					}
@@ -583,7 +581,6 @@ public class CommandRunnerToolWindow {
 			});
 			
 			btnRefresh.addActionListener(e -> rebuildTree());
-			btnSyncConfig.addActionListener(e -> syncMavenRunConfigurations());
 			
 			mainPanel.add(toolbar, BorderLayout.NORTH);
 			mainPanel.add(new JScrollPane(tree), BorderLayout.CENTER);
@@ -1054,7 +1051,7 @@ public class CommandRunnerToolWindow {
 			// 4. 为每个模块打包目标创建运行配置
 			int created = 0;
 			for (GoalNode goal : moduleGoals) {
-				syncSingleMavenRunConfigurations(goal);
+				syncSingleMavenRunConfigurations(goal, false);
 				created++;
 			}
 			
@@ -1062,7 +1059,7 @@ public class CommandRunnerToolWindow {
 				NotificationType.INFORMATION);
 		}
 		
-		public void syncSingleMavenRunConfigurations(GoalNode goal) {
+		public void syncSingleMavenRunConfigurations(GoalNode goal, boolean isNotify) {
 			String basePath = currentProject.getBasePath();
 			RunManager runManager = RunManager.getInstance(currentProject);
 			
@@ -1108,6 +1105,11 @@ public class CommandRunnerToolWindow {
 				}
 				
 				runManager.addConfiguration(settings);
+				
+				if (isNotify) {
+					notify(goal.name + "同步成功。",
+						NotificationType.INFORMATION);
+				}
 			} catch (Exception e) {
 				// 单个配置创建失败，继续下一个
 			}
@@ -1463,7 +1465,9 @@ public class CommandRunnerToolWindow {
 				// 展开：将高级面板添加到父容器
 				parentPanel.add(advancedPanel, advancedPanelGbc);
 				parentPanel.revalidate();
-				if (wnd != null) wnd.pack();
+				if (wnd != null) {
+					wnd.pack();
+				}
 			} else {
 				// 折叠：从父容器移除高级面板
 				parentPanel.remove(advancedPanel);
